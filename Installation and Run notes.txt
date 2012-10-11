@@ -1,0 +1,63 @@
+Installation notes
+------------------
+1. unzip abp-275-project1.zip to a folder. This will lay down the following folders and files
+
+    build        - points to "upload-queue-service.xml"
+                
+    classes          - the compiled classes reside here, once the ant script is run
+
+    conf            - contains
+                            log4j.properties
+                            persistence.xml - // change the mysql database url and user/password here
+
+    data            - contains 3 sub folders 
+                        - fileArchive - //the archive files are stored here
+                        - outFiles - the .kml and .json files after and analyst query and point query 
+                        - realtime - here the nws real time files such as "mesowest,gz" and "mesowest_csv.gz" 
+
+   jars/rss          - the external jars such as 
+                                   'gson-2.1.jar', 'JavaAPIforKml.jar', and 
+                                     'rssutils.jar' required for compilation 
+
+   src              - the java sources
+              - com.client - contains the client programs for "mesonat upload", 
+                                         "point    query", "range query" and "Data load"(NWS feed)
+              - com.controller.servlet -servlet clode and the client to integrate 
+                                         with PointQueryEJB
+                     - com.ejb.query - contains all the EJB code for query purposes
+                     - com.ejb.upload - contains all the EJB code for upload purposes
+                     - com.entity.jpa - contains all the jap code for interacting with database as well as NWS
+                     - com.ejb.query - contains all theFile read and write code for json and kml file 
+                                                 Read/writes
+                     -com.JUnit.test - contains all the test cases.
+    Tests           - contains the test cases 
+
+    WebContent
+                    - contains the query.jsp and web.xml for servlet configuration
+
+    build.xml        - the build file to compile, deploy and initaiting NWS real time feeds the sources
+
+
+Run notes
+---------
+pre-requisite - Make sure JAVA_HOME is pointed appropriately in batch files
+
+1. run 'ant build' from installed folder. This compiles the sources to the 'classes' directory.
+
+2. run 'ant war' 
+            - creates a P1.war file
+            - deploys the P1.war to running Jboss
+
+3. run 'ant nws' 
+            - starts the initial sequence to 
+                - connect to "http://mesowest.utah.edu/data/mesowest.out.gz" and initiate metadata  read on startup(once)
+                - connect to "http://mesowest.utah.edu/data/mesowest.csv.gz" and initiate data read on every 10 minutes
+
+4. run 'ant analyst'
+            - runs sample to do a analyst query and stores read data to file located in .\data\outFiles
+
+5.run 'ant mesonet' -
+                 - updates mesonat data to the system.
+
+6. run 'ant point' - gives the output for public user
+
